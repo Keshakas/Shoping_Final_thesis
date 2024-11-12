@@ -44,12 +44,25 @@
                                 </form>
                             </li>
                           {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register'%}">Registruotis</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'login'%}">Prisijungti</a></li>
                           {% endif %}
                         </ul>
                     </div>
                 </div>
             </nav>
+            <div class="row">
+                <div class="col-sm">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'info' %}success{% endif %}"
+                         role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
             {% block "content" %}{% endblock %}
 
         <!-- Footer-->
