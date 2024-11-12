@@ -3,6 +3,8 @@
 {% block "title" %}{% trans "Login" %}{% endblock %}
 
 {% block "content" %}
+{% load static %}
+{% load widget_tweaks %}
 
   {% if form.errors %}
     <p>{% trans "Login error, please try again!" %}</p>
@@ -16,20 +18,36 @@
 
   <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
-    <table>
-      <tr>
-        <td>{% trans "Username" %}: </td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>{% trans "Password" %}: </td>
-        <td>{{ form.password }}</td>
-      </tr>
+    <div class="d-flex justify-content-center my-5">
+    <table class="table table-bordered table-sm shadow-lg rounded-3" style="max-width: 500px; width: 100%; background-color: #fff;">
+        <thead class="table-light">
+            <tr>
+                <th colspan="2" class="text-center py-3"><h4>Login Form</h4></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><label for="username">Username: </label></td>
+                <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+                <td><label for="password">Password: </label></td>
+                <td>{{ form.password }}</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg w-40">Login</button>
+                  <input type="hidden" name="next" value="{{ next }}" />
+                  <p><a href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></p>
+                </td>
+            </tr>
+        </tfoot>
     </table>
-    <input type="submit" value='{% trans "Login" %}' />
-    <input type="hidden" name="next" value="{{ next }}" />
+</div>
+
   </form>
 
-  <p><a href="{% url 'password_reset' %}">{% trans "Forgot password?" %}</a></p>
 
 {% endblock %}
