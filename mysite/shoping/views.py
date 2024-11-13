@@ -5,11 +5,24 @@ from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth import password_validation
+from .models import Store, Category, Product
 
+
+# def index(request):
+#     # return HttpResponse("Labas, pasauli!")
+#     return render(request, template_name="index.html")
 
 def index(request):
-    # return HttpResponse("Labas, pasauli!")
-    return render(request, template_name="index.html")
+    num_stores = Store.objects.count()
+    num_categories = Category.objects.count()
+    num_products = Product.objects.count()
+    context = {
+        "num_stores": num_stores,
+        "num_categories": num_categories,
+        "num_products": num_products,
+    }
+    return render(request, template_name="index.html", context=context)
+
 
 def resume(request):
     return render(request, template_name="resume.html")
