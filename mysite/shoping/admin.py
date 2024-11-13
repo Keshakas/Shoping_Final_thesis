@@ -1,3 +1,17 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Store, Category, Product, ProductPrice
+
+
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category']
+
+
+class ProductPriceAdmin(admin.ModelAdmin):
+    list_display = ['product', 'store', 'price', 'date_checked']
+    readonly_fields = ('date_checked',)
+
+admin.site.register(Store)
+admin.site.register(Category)
+admin.site.register(Product, ProductAdmin)
+admin.site.register(ProductPrice, ProductPriceAdmin)
