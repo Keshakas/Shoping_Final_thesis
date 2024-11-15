@@ -8,6 +8,7 @@ from django.contrib.auth import password_validation
 from .models import Store, Category, Product
 
 
+
 # def index(request):
 #     # return HttpResponse("Labas, pasauli!")
 #     return render(request, template_name="index.html")
@@ -68,3 +69,4 @@ def register(request):
             messages.error(request, 'Slaptažodžiai nesutampa!')
             return redirect('register')
     return render(request, 'registration/register.html')
+
