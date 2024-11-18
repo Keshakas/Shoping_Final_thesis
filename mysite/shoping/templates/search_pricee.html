@@ -9,22 +9,46 @@
 
 <div class="container-sm mt-4" style="max-width: 600px;">
     <h1 class="text-center">Paieška</h1>
-    <form method="GET" class="form">
-        {{ form | crispy }}
-        <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary">Ieškoti</button>
-        </div>
-    </form>
+    <form method="POST">
+    {% csrf_token %}
+    {% if step == 1 %}
+    <!-- Kategorijos pasirinkimas -->
+    <div class="form-group">
+        <label for="category">Pasirinkite kategoriją:</label>
+        <select name="category" id="category" class="form-control">
+            <option value="" disabled selected>-- Pasirinkite --</option>
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" name="select_category" class="btn btn-primary mt-3">Patvirtinti</button>
 
-    {% if search_performed %}
-        {% if result %}
-            <h2 class="mt-4">Rezultatai:</h2>
-            <p><strong>Produktas:</strong> {{ result.0 }}</p>
-            <p><strong>Kaina:</strong> {{ result.1 }} EUR</p>
-        {% else %}
-            <p class="text-warning mt-4">Nerasta jokių rezultatų.</p>
-        {% endif %}
+    {% elif step == 2 %}
+    <!-- Produktų pasirinkimas -->
+    <div class="form-group">
+        <label for="product">Pasirinkite produktą:</label>
+        <select name="product" id="product" class="form-control">
+            <option value="" disabled selected>-- Pasirinkite --</option>
+            {% for product in products %}
+            <option value="{{ product.id }}">{{ product.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" name="search_product" class="btn btn-primary mt-3">Ieškoti</button>
     {% endif %}
+</form>
+
+<!-- Rezultato rodymas -->
+{% if result %}
+<div class="alert alert-success mt-4">
+    <h4>Rezultatas:</h4>
+    <p>Pigiausias pasirinkimas: {{ result }}</p>
+    <h2>Mažiausia kaina: {{ result.price }} EUR</h2>
+    <h3>Produkto pavadinimas: {{ result.name }}</h3>
+</div>
+{% endif %}
+
 </div>
 
 {% endblock %}

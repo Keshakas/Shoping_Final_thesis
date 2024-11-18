@@ -29,18 +29,42 @@ def get_filtered_lowest_price(file_path, product_name, fat_content, quantity):
 
 
 def get_lowest_price_from_csv(file_path, product_name):
-    # Nuskaitome CSV failą į DataFrame
-    with open(file_path, 'r', encoding='utf-8') as file:
-        df = pd.read_csv(file)
+    try:
+        # Nuskaitome CSV failą
+        df = pd.read_csv(file_path)
+        print(f"Loaded CSV:\n{df.head()}")
 
-    # Filtruojame pagal produkto pavadinimą (naudojame case-insensitive paiešką)
-    filtered_df = df[df['Name'].str.contains(product_name, case=False, na=False)]
+        # Patikriname, ar stulpeliai egzistuoja
+        if 'Name' not in df.columns or 'Price' not in df.columns:
+            print("Error: 'Name' or 'Price' columns missing in CSV")
+            return None, None
 
-    if filtered_df.empty:
-        return None, None  # Jei nėra rezultatų, grąžiname tuščią reikšmę
+        # Konvertuojame 'Price' į skaitmeninį formatą
+        df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
 
-    # Randame eilutę su mažiausia kaina
-    min_price_row = filtered_df.loc[filtered_df['Price'].idxmin()]
+        # Lankstus filtravimas pagal `product_name`
+        search_terms = product_name.lower().split()
+        print(f"Search terms: {search_terms}")
 
-    # Grąžiname pilną pavadinimą ir mažiausią kainą
-    return min_price_row['Name'], min_price_row['Price']
+        filtered_df = df[df['Name'].str.lower().apply(
+            lambda x: all(term in x for term in search_terms)
+        )]
+        print(f"Filtered DataFrame:\n{filtered_df}")
+
+        # Jei filtravimas grąžina reikšmes
+        if not filtered_df.empty:
+            # Surandame minimalią kainą
+            min_row = filtered_df.loc[filtered_df['Price'].idxmin()]
+            print(f"Lowest price row: {min_row}")
+            # return min_row['Name'], float(min_row['Price'])
+            return {
+                'price': float(min_row['Price']),
+                'name': min_row['Name']
+            }
+        else:
+            print("No matching products found in CSV")
+            return None, None
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None, None

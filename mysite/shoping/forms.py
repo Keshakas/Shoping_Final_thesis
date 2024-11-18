@@ -17,3 +17,19 @@ class CsvPriceSearchForm(forms.Form):
         label="Produktas",
         widget=forms.Select(attrs={"id": "product-select"})
     )
+
+class CategoryForm(forms.Form):
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        required=True,
+        label="Kategorija",
+        widget=forms.Select(attrs={"id": "category-select"})
+    )
+
+class ProductForm(forms.Form):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.none(),  # Inicialiai nėra jokių produktų
+        required=True,
+        label="Produktas",
+        widget=forms.Select(attrs={"id": "product-select"})
+    )

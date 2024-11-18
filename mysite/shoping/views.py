@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.template.context_processors import request
 from django.views import generic
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
@@ -10,7 +11,7 @@ from .models import Store, Category, Product, ProductPrice
 from .utils import get_filtered_lowest_price, get_lowest_price_from_csv
 from django.http import HttpResponse
 from django.utils import timezone
-from .forms import CsvPriceSearchForm
+from .forms import CsvPriceSearchForm, CategoryForm, ProductForm
 
 
 # def index(request):
@@ -97,13 +98,70 @@ def search_price(request):
     })
 
 
-def search_price_view(request):
-    result = None
-    search_performed = False
-    products = None  # Inicializuojame produktus kaip None, kad galėtume užpildyti vėliau
 
-    # Sukuriame formą, užpildytą GET duomenimis, jeigu jie yra
-    form = CsvPriceSearchForm(request.GET or None)
+def search_price_view(request):
+    categories = Category.objects.all()
+    selected_category = None
+    products = []
+    result = None
+
+    if request.method == "POST":
+        if "select_category" in request.POST:
+            category_id = request.POST.get("category")
+            if category_id:
+                selected_category = Category.objects.get(id=category_id)
+                products = Product.objects.filter(category=selected_category)
+                request.session["selected_category_id"] = category_id
+                return render(request, "search_pricee.html", {
+                    "step": 2,
+                    "categories": categories,
+                    "products": products,
+                    "selected_category": selected_category,
+                })
+
+        elif "search_product" in request.POST:
+            product_id = request.POST.get("product")
+            if product_id:
+                product = Product.objects.get(id=product_id)
+                file_path = "barbora_pienas.csv"
+                print(f"Searching for product: {product.name}")
+                result = get_lowest_price_from_csv(file_path, product.name)
+                print(f"Search result: {result}")
+
+                selected_category_id = request.session.get("selected_category_id")
+                if selected_category_id:
+                    selected_category = Category.objects.get(id=selected_category_id)
+                    products = Product.objects.filter(category=selected_category)
+
+                return render(request, "search_pricee.html", {
+                    "step": 2,
+                    "categories": categories,
+                    "products": products,
+                    "selected_category": selected_category,
+                    "result": result,
+                })
+
+    return render(request, "search_pricee.html", {
+        "step": 1,
+        "categories": categories,
+        "products": products,
+    })
+
+
+
+def demo_search_view(request):
+    form = CategoryForm(request.GET or None)
+    form2 = ProductForm(request.POST or None)
+    if request.method == 'POST':
+        if form2.is_valid():
+            product = form2.cleaned_data['product']
+            print("product:", product)
+            file_path = 'barbora_pienas.csv'  # Pakeiskite į savo CSV failo kelią
+            result = get_lowest_price_from_csv(file_path, product.name)
+            return render(request, 'demo_result.html', {
+
+                'result': result,
+            })
 
     if form.is_valid():
         category = form.cleaned_data['category']  # Pasirinkta kategorija
@@ -113,19 +171,21 @@ def search_price_view(request):
         products = Product.objects.filter(category=category)
         print(f"Filtered products: {products}")  # Debug eilutė
 
+
+
         # Užpildome 'product' lauką su naujai užpildytu produktų sąrašu
-        form.fields['product'].queryset = products
+        form2.fields['product'].queryset = products
 
-        # Jei formoje pasirinktas produktas, atliekame paiešką
-        if 'product' in form.cleaned_data:
-            product = form.cleaned_data['product']
-            search_performed = True
-            file_path = 'barbora_pienas.csv'  # Pakeiskite į savo CSV failo kelią
-            result = get_lowest_price_from_csv(file_path, product.name)
+        # # Jei formoje pasirinktas produktas, atliekame paiešką
+        # if 'product' in form.cleaned_data:
+        #     product = form.cleaned_data['product']
+        #     search_performed = True
+        #     file_path = 'barbora_pienas.csv'  # Pakeiskite į savo CSV failo kelią
+        #     result = get_lowest_price_from_csv(file_path, product.name)
 
-    return render(request, 'search_pricee.html', {
-        'form': form,
-        'result': result,
-        'search_performed': search_performed,
-        'products': products  # Pateikiame produktus į šabloną
-    })
+        return render(request, 'demo_search.html', {
+            'form': form,
+            'form2': form2,
+        })
+
+    return render(request, 'demo_search.html', context={"form": form})
