@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block "title" %} Search price1 {% endblock %}
+
+{% block "content" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+<div class="container-sm mt-4" style="max-width: 600px;">
+    <h1 class="text-center">Paieška</h1>
+    <form method="GET" class="form">
+        {{ form | crispy }}
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Ieškoti</button>
+        </div>
+    </form>
+
+    {% if search_performed %}
+        {% if result %}
+            <h2 class="mt-4">Rezultatai:</h2>
+            <p><strong>Produktas:</strong> {{ result.0 }}</p>
+            <p><strong>Kaina:</strong> {{ result.1 }} EUR</p>
+        {% else %}
+            <p class="text-warning mt-4">Nerasta jokių rezultatų.</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

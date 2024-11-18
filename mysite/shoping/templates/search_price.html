@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block "title" %} Search price {% endblock %}
+
+{% block "content" %}
+{% load static %}
+
+<h5>Įveskite paieškos kriterijus ir spauskite „Ieškoti“.</h5>
+<form method="get">
+    <label for="product_name">Produkto pavadinimas:</label>
+    <input type="text" id="product_name" name="product_name" required><br>
+
+    <label for="fat_content">Riebalų procentas:</label>
+    <input type="text" id="fat_content" name="fat_content" required><br>
+
+    <label for="quantity">Kiekis (pvz., 1L):</label>
+    <input type="text" id="quantity" name="quantity" required><br>
+
+    <button type="submit">Ieškoti</button>
+</form>
+
+{% if search_performed %}
+    {% if result %}
+        <h2>Mažiausia kaina: {{ result.price }} EUR</h2>
+        <h3>Produkto pavadinimas: {{ result.name }}</h3>
+    {% else %}
+        <h2>Nerasta atitinkančių produktų</h2>
+    {% endif %}
+{% else %}
+
+{% endif %}
+
+{% endblock %}
