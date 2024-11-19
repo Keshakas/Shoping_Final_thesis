@@ -38,7 +38,7 @@ def get_lowest_price_from_csv(file_path, product_name):
         # Patikriname, ar stulpeliai egzistuoja
         if 'Name' not in df.columns or 'Price' not in df.columns:
             print("Error: 'Name' or 'Price' columns missing in CSV")
-            return None, None
+            return None
 
         # Konvertuojame 'Price' į skaitmeninį formatą
         df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
@@ -57,15 +57,14 @@ def get_lowest_price_from_csv(file_path, product_name):
             # Surandame minimalią kainą
             min_row = filtered_df.loc[filtered_df['Price'].idxmin()]
             print(f"Lowest price row: {min_row}")
-            # return min_row['Name'], float(min_row['Price'])
             return {
-                'price': float(min_row['Price']),
-                'name': min_row['Name']
+                'price': float(min_row['Price']),  # Tik skaičius
+                'name': min_row['Name']  # Pilnas pavadinimas
             }
         else:
             print("No matching products found in CSV")
-            return None, None
+            return None
 
     except Exception as e:
         print(f"An error occurred: {e}")
-        return None, None
+        return None
