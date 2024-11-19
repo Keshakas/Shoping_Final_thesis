@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 from django.template.context_processors import request
 from django.views import generic
 from django.contrib.auth.forms import User
@@ -74,6 +75,10 @@ def register(request):
             return redirect('register')
     return render(request, 'registration/register.html')
 
+
+@login_required
+def profile(request):
+    return render(request, template_name="profile.html")
 
 def search_price(request):
     result = None  # Numatytasis rezultatas
