@@ -40,13 +40,15 @@
 </form>
 
 <!-- Rezultato rodymas -->
-{% if result %}
-<div class="alert alert-success mt-4">
-    <h4>Rezultatas:</h4>
-    <p>Pigiausias pasirinkimas: {{ result }}</p>
-    <h2>Mažiausia kaina: {{ result.price }} EUR</h2>
-    <h3>Produkto pavadinimas: {{ result.name }}</h3>
-</div>
+{% if results %}
+    <h3>Paieškos rezultatai:</h3>
+    <ul>
+        {% for file_path, result in results.items %}
+            <li>
+                <strong>{{ file_path }}:</strong> {{ result }}
+            </li>
+        {% endfor %}
+    </ul>
 {% endif %}
 
 </div>

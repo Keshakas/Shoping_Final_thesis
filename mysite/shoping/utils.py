@@ -31,7 +31,8 @@ def get_filtered_lowest_price(file_path, product_name, fat_content, quantity):
 def get_lowest_price_from_csv(file_path, product_name):
     try:
         # Nuskaitome CSV failą
-        df = pd.read_csv(file_path)
+        with open(file_path, 'r', encoding='utf-8') as file:
+            df = pd.read_csv(file)
         print(f"Loaded CSV:\n{df.head()}")
 
         # Patikriname, ar stulpeliai egzistuoja

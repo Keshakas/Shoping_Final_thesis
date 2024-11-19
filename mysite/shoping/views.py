@@ -103,7 +103,7 @@ def search_price_view(request):
     categories = Category.objects.all()
     selected_category = None
     products = []
-    result = None
+    results = {}
 
     if request.method == "POST":
         if "select_category" in request.POST:
@@ -123,10 +123,13 @@ def search_price_view(request):
             product_id = request.POST.get("product")
             if product_id:
                 product = Product.objects.get(id=product_id)
-                file_path = "barbora_pienas.csv"
+                csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
+
                 print(f"Searching for product: {product.name}")
-                result = get_lowest_price_from_csv(file_path, product.name)
-                print(f"Search result: {result}")
+                for file_path in csv_files:
+                    result = get_lowest_price_from_csv(file_path, product.name)
+                    print(f"Search result in {file_path}: {result}")
+                    results[file_path] = result
 
                 selected_category_id = request.session.get("selected_category_id")
                 if selected_category_id:
@@ -138,7 +141,7 @@ def search_price_view(request):
                     "categories": categories,
                     "products": products,
                     "selected_category": selected_category,
-                    "result": result,
+                    "results": results,  # Atskirai pateikiame rezultatus iš kiekvieno failo
                 })
 
     return render(request, "search_pricee.html", {
