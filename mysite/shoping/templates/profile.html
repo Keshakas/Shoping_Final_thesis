@@ -3,6 +3,7 @@
 
 {% block "content" %}
 <div class="container my-5">
+    <img class="rounded-circle account-img" src="{{ user.profile.photo.url }}" style="max-width: 15%">
     <h3>Mano profilis:</h3>
     <ul>
        <li><strong>Vartotojas: </strong>{{ user.get_username }}</li>
