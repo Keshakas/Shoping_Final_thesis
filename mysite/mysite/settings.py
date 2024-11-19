@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from .my_settings import SECRET_KEY, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 
@@ -134,6 +135,11 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# media folder settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'shoping/media')
+MEDIA_URL = '/media/'
+# print(MEDIA_ROOT) - nevenkite padebuginti, bus lengviau nepasiklysti django filesystem džiunglėse
 
 LOGIN_URL = '/shoping/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
