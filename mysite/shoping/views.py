@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.contrib.auth import password_validation
 from .models import Store, Category, Product, ProductPrice
 from .utils import get_filtered_lowest_price, get_lowest_price_from_csv
+from .forms import UserUpdateForm
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -78,7 +79,22 @@ def register(request):
 
 @login_required
 def profile(request):
-    return render(request, template_name="profile.html")
+    if request.method == "POST":
+        new_email = request.POST['email']
+        new_first_name = request.POST['first_name']
+        new_last_name = request.POST['last_name']
+        user_update_form = UserUpdateForm(request.POST, instance=request.user)
+        if request.user.email != new_email and User.objects.filter(email=new_email).exists():
+            messages.error(request, f"Vartotojas su el. paštu {new_email} jau užregistruotas!")
+            return redirect("profile")
+        if user_update_form.is_valid():
+            request.user.first_name = new_first_name
+            request.user.last_name = new_last_name
+            user_update_form.save()
+            messages.info(request, "Profilis atnaujintas")
+            return redirect("profile")
+    user_update_form = UserUpdateForm(instance=request.user)
+    return render(request, template_name="profile.html", context={'user_update_form': user_update_form})
 
 def search_price(request):
     result = None  # Numatytasis rezultatas
