@@ -1,22 +1,27 @@
 {% extends 'base.html' %}
 {% block "title" %}Mano profilis{% endblock %}
+
 {% block "content" %}
-<h1>Mano profilis:</h1>
-<ul>
-   <li><strong>Vartotojas: </strong>{{ user.get_username }}</li>
-   <li><strong>Vardas: </strong>{{ user.first_name }}</li>
-   <li><strong>Pavardė: </strong>{{ user.last_name }}</li>
-   <li><strong>El. paštas: </strong>{{ user.email }}</li>
-   <li><strong>Prisijungęs nuo: </strong>{{ user.date_joined | date:"Y-m-d, H:i" }}</li>
-</ul>
-<form method="post">
-    {% csrf_token %}
-    <fieldset>
-        <legend class="border-bottom mb-4">Profilio info</legend>
-        {{ user_update_form }}
-    </fieldset>
-    <div class="form-group">
-        <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
-    </div>
-</form>
+<div class="container my-5">
+    <h3>Mano profilis:</h3>
+    <ul>
+       <li><strong>Vartotojas: </strong>{{ user.get_username }}</li>
+       <li><strong>Vardas: </strong>{{ user.first_name }}</li>
+       <li><strong>Pavardė: </strong>{{ user.last_name }}</li>
+       <li><strong>El. paštas: </strong>{{ user.email }}</li>
+       <li><strong>Prisijungęs nuo: </strong>{{ user.date_joined | date:"Y-m-d, H:i" }}</li>
+    </ul>
+    <form method="post">
+        {% load crispy_forms_tags %}
+        {% csrf_token %}
+        <fieldset>
+            <legend class="border-bottom mb-4">Profilio info</legend>
+            {{ user_update_form | crispy }}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
+        </div>
+    </form>
+</div>
+
 {% endblock %}
