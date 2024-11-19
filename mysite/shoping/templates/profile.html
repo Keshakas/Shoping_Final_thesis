@@ -12,12 +12,13 @@
        <li><strong>El. paštas: </strong>{{ user.email }}</li>
        <li><strong>Prisijungęs nuo: </strong>{{ user.date_joined | date:"Y-m-d, H:i" }}</li>
     </ul>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% load crispy_forms_tags %}
         {% csrf_token %}
         <fieldset>
             <legend class="border-bottom mb-4">Profilio info</legend>
             {{ user_update_form | crispy }}
+            {{ profile_update_form | crispy }}
         </fieldset>
         <div class="form-group">
             <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
