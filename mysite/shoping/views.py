@@ -68,6 +68,13 @@ class MyShoppingCartCreateView(LoginRequiredMixin, generic.CreateView):
         return super().form_valid(form)
 
 
+class MyShoppingCartUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = ShoppingCart
+    template_name = "my_shopping_cart_form.html"
+    fields = ['name']
+    success_url = "/myshoppingcart/"
+
+
 @csrf_protect
 def register(request):
     if request.method == "POST":

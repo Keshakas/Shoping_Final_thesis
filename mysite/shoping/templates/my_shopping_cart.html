@@ -3,7 +3,7 @@
 
 {% block "content" %}
     <div class="container-sm mt-4" style="max-width: 600px;">
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'cart_new' %}">Naujas krepšelis</a>
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'cart_new' %}">Naujas krepšelis</a>
         <h2 class="text-center mb-3"> Mano krepšelis:</h2>
         {% for cart in carts %}
         <a href="{{ cart.pk }}"><p>{{ cart.date }} -- {{ cart.name }}</p></a>

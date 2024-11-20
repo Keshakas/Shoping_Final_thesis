@@ -7,7 +7,7 @@
     <h4>Krepšelis Nr.: {{ cart.pk }}</h4>
     <ul>
         <li><strong>Data: </strong>{{ cart.date }}</li>
-        <li><strong>Vartotojas: </strong>{{ cart.user }}</li>
+        <li><strong>Pavadinimas: </strong>{{ cart.name }}</li>
     </ul>
     <hr>
     <table class="table table-striped">
@@ -29,6 +29,9 @@
         {% endfor %}
     </tbody>
     </table>
+    <div>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
+    </div>
 </div>
 
 {% endblock %}
