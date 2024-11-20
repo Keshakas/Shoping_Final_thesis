@@ -6,7 +6,7 @@
 <div class="container-sm mt-4" style="max-width: 600px;">
     <h4>Krepšelis Nr.: {{ cart.pk }}</h4>
     <ul>
-        <li><strong>Data: </strong>{{ cart.date }}</li>
+        <li><strong>Data: </strong>{{ cart.date | date:"Y-m-d, H:i" }}</li>
         <li><strong>Pavadinimas: </strong>{{ cart.name }}</li>
     </ul>
     <hr>
@@ -31,6 +31,7 @@
     </table>
     <div>
     <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
     </div>
 </div>
 

@@ -75,6 +75,13 @@ class MyShoppingCartUpdateView(LoginRequiredMixin, generic.UpdateView):
     success_url = "/myshoppingcart/"
 
 
+class MyShoppingCartDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = ShoppingCart
+    template_name = "my_shopping_cart_delete.html"
+    context_object_name = 'cart'
+    success_url = "/myshoppingcart/"
+
+
 @csrf_protect
 def register(request):
     if request.method == "POST":
