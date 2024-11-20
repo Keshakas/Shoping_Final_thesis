@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block "title" %}Mano produktai{% endblock %}
+
+{% block "content" %}
+
+<div class="container-sm mt-4" style="max-width: 600px;">
+    <h4>Krepšelis Nr.: {{ cart.pk }}</h4>
+    <ul>
+        <li><strong>Data: </strong>{{ cart.date }}</li>
+        <li><strong>Vartotojas: </strong>{{ cart.user }}</li>
+    </ul>
+    <hr>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Produktas</th>
+            <th>Parduotuvė</th>
+            <th>Kaina</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in cart.products.all %}
+        <tr>
+            <td>{{ product.product }}</td>
+            <td>{{ product.store }}</td>
+            <td>{{ product.price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+
+{% endblock %}

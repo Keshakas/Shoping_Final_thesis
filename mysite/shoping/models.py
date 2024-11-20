@@ -66,7 +66,7 @@ class ProductPrice(models.Model):
     product = models.ForeignKey(Product, verbose_name="Produktas", on_delete=models.CASCADE)
     store = models.ForeignKey(Store, verbose_name="Parduotuvė", on_delete=models.CASCADE, null=True, blank=True)
     price = models.DecimalField(verbose_name="Kaina", max_digits=10, decimal_places=2)
-    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE)
+    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE, related_name="products")
 
     def __str__(self):
         return f"{self.product.name} - {self.price} {self.cart}"

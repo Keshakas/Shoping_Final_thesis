@@ -50,6 +50,12 @@ class MyShoppingCartListView(LoginRequiredMixin, generic.ListView):
         return ShoppingCart.objects.filter(user=self.request.user)
 
 
+class MyShoppingCartDetailView(generic.DetailView):
+    model = ShoppingCart
+    template_name = "my_shopping_cart_detail.html"
+    context_object_name = "cart"
+
+
 @csrf_protect
 def register(request):
     if request.method == "POST":
