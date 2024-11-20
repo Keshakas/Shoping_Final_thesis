@@ -12,6 +12,7 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path('search_price/', views.search_price, name='search_price'),
     path('search_pricee/', views.search_price_view, name='search_pricee'),
+    path("myshoppingcart/", views.MyShoppingCartListView.as_view(), name="my_shopping_cart"),
 ]
 
 urlpatterns += [

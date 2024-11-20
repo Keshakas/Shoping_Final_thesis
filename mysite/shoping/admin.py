@@ -1,6 +1,11 @@
 from django.contrib import admin
+from .models import Store, Category, Product, ProductPrice, Profile, ShoppingCart
 
-from .models import Store, Category, Product, ProductPrice, Profile
+
+class ProductPriceInline(admin.TabularInline):
+    model = ProductPrice
+    extra = 0 # išjungia papildomas tuščias eilutes įvedimui
+    fields = ['product', 'price']
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -9,12 +14,18 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 class ProductPriceAdmin(admin.ModelAdmin):
-    list_display = ['product', 'store', 'price', 'date_checked']
+    list_display = ['product', 'store', 'price', 'cart']
     list_filter = ['product', 'store', 'price']
-    readonly_fields = ('date_checked',)
+
+
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ['date', 'user']
+    inlines = [ProductPriceInline]
+    readonly_fields = ['date']
 
 admin.site.register(Store)
 admin.site.register(Category)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductPrice, ProductPriceAdmin)
 admin.site.register(Profile)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)

@@ -2,13 +2,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.template.context_processors import request
 from django.views import generic
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth import password_validation
-from .models import Store, Category, Product, ProductPrice
+from .models import Store, Category, Product, ProductPrice, ShoppingCart
 from .utils import get_filtered_lowest_price, get_lowest_price_from_csv
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.http import HttpResponse
@@ -39,6 +40,14 @@ def projects(request):
 
 def contact(request):
     return render(request, template_name="contact.html")
+
+
+class MyShoppingCartListView(LoginRequiredMixin, generic.ListView):
+    model = ShoppingCart
+    template_name = "my_shopping_cart.html"
+    context_object_name = "carts"
+    def get_queryset(self):
+        return ShoppingCart.objects.filter(user=self.request.user)
 
 
 @csrf_protect

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from datetime import datetime
 
 
 class Profile(models.Model):
@@ -48,16 +49,30 @@ class Product(models.Model):
         verbose_name_plural = "Produktai"
 
 
-class ProductPrice(models.Model):
-    product = models.ForeignKey(Product, verbose_name="Produktas", on_delete=models.CASCADE)
-    store = models.ForeignKey(Store, verbose_name="Parduotuvė", on_delete=models.CASCADE)
-    price = models.DecimalField(verbose_name="Kaina", max_digits=10, decimal_places=2, null=True, blank=True)
-    date_checked = models.DateTimeField(verbose_name="Tikrinimo data", auto_now_add=True)
+class ShoppingCart(models.Model):
+    date = models.DateTimeField(verbose_name="Data", auto_now_add=True)
+    user = models.ForeignKey(User, verbose_name="Vartotojas", on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.product.name} - {self.store.name}:  {self.price}"
+        return f"{self.date} -- "
+
+    class Meta:
+        verbose_name = "Pirkinių krepšelis"
+        verbose_name_plural = "Pirkinių krepšeliai"
+        ordering = ['-date']
+
+
+class ProductPrice(models.Model):
+    product = models.ForeignKey(Product, verbose_name="Produktas", on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, verbose_name="Parduotuvė", on_delete=models.CASCADE, null=True, blank=True)
+    price = models.DecimalField(verbose_name="Kaina", max_digits=10, decimal_places=2)
+    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.product.name} - {self.price} {self.cart}"
 
     class Meta:
         verbose_name = "Produkto kaina"
         verbose_name_plural = "Produktų kainos"
-        ordering = ['-date_checked']
+
+
