@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block "title" %}Krepšelio sukūrimas/redagavimas{% endblock %}
+
+{% block "content" %}
+<div class="container-sm mt-4" style="max-width: 600px;">
+    <form method="POST">
+        {% load crispy_forms_tags %}
+        {% csrf_token %}
+        <legend class="border-bottom mb-4">Krepšelio kūrimas/redagavimas</legend>
+        {{ form | crispy }}
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Išsaugoti</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

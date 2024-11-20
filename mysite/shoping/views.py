@@ -56,6 +56,18 @@ class MyShoppingCartDetailView(generic.DetailView):
     context_object_name = "cart"
 
 
+class MyShoppingCartCreateView(LoginRequiredMixin, generic.CreateView):
+    model = ShoppingCart
+    template_name = "my_shopping_cart_form.html"
+    fields = ["name"]
+    success_url = "/myshoppingcart/"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+
 @csrf_protect
 def register(request):
     if request.method == "POST":

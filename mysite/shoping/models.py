@@ -52,9 +52,10 @@ class Product(models.Model):
 class ShoppingCart(models.Model):
     date = models.DateTimeField(verbose_name="Data", auto_now_add=True)
     user = models.ForeignKey(User, verbose_name="Vartotojas", on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(verbose_name="Pavadinimas", max_length=100, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.date} -- "
+        return f"{self.date} -- {self.name}"
 
     class Meta:
         verbose_name = "Pirkinių krepšelis"
@@ -74,5 +75,19 @@ class ProductPrice(models.Model):
     class Meta:
         verbose_name = "Produkto kaina"
         verbose_name_plural = "Produktų kainos"
+
+
+class MyProductPrice(models.Model):
+    product = models.CharField(verbose_name="Produktas", max_length=100)
+    store = models.CharField(verbose_name="Parduotuvė", max_length=100, null=True, blank=True)
+    price = models.DecimalField(verbose_name="Kaina", max_digits=10, decimal_places=2)
+    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE, related_name="my_products")
+
+    def __str__(self):
+        return f"{self.product.name} - {self.price} {self.cart}"
+
+    class Meta:
+        verbose_name = "Mano produkto kaina"
+        verbose_name_plural = "Mano produktų kainos"
 
 
