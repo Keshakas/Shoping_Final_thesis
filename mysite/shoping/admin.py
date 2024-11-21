@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Store, Category, Product, ProductPrice, Profile, ShoppingCart, MyProductPrice
+from .models import Store, Category, Product, ProductPrice, Profile, ShoppingCart, MyProductPrice, SavedResult
 
 
 class ProductPriceInline(admin.TabularInline):
@@ -30,3 +30,4 @@ admin.site.register(ProductPrice, ProductPriceAdmin)
 admin.site.register(Profile)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(MyProductPrice)
+admin.site.register(SavedResult)

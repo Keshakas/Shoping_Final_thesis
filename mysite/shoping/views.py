@@ -9,7 +9,7 @@ from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth import password_validation
-from .models import Store, Category, Product, ProductPrice, ShoppingCart
+from .models import Store, Category, Product, ProductPrice, ShoppingCart, SavedResult
 from .utils import get_filtered_lowest_price, get_lowest_price_from_csv
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.http import HttpResponse
@@ -165,13 +165,12 @@ def search_price(request):
     })
 
 
-
 def search_price_view(request):
     categories = Category.objects.all()
     selected_category = None
     products = []
-    results = []  # Pradžioje tuščias sąrašas
-    searched_product = None  # Inicializuojame kaip None
+    results = []
+    searched_product = None
 
     if request.method == "POST":
         if "select_category" in request.POST:
@@ -186,14 +185,14 @@ def search_price_view(request):
                     "products": products,
                     "selected_category": selected_category,
                     "results": results,
-                    "searched_product": searched_product,  # Nesiunčiame produkto kol nepasirinktas
+                    "searched_product": searched_product,
                 })
 
         elif "search_product" in request.POST:
             product_id = request.POST.get("product")
             if product_id:
                 product = Product.objects.get(id=product_id)
-                searched_product = product.name  # Užfiksuojame paieškos produktą
+                searched_product = product.name
                 csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
 
                 for file_path in csv_files:
@@ -202,10 +201,14 @@ def search_price_view(request):
 
                     if result:
                         results.append({
+                            "id": len(results) + 1,  # Pridedame rezultatų ID
                             "store": store_name,
                             "name": result["name"],
                             "price": result["price"]
                         })
+
+                # Įrašome rezultatus į sesiją
+                request.session["results"] = results
 
                 selected_category_id = request.session.get("selected_category_id")
                 if selected_category_id:
@@ -221,10 +224,29 @@ def search_price_view(request):
                     "searched_product": searched_product,
                 })
 
+        elif "save_results" in request.POST:
+            results = request.session.get("results", [])  # Atkuriame sesijoje saugotus rezultatus
+            selected_ids = request.POST.getlist("selected_results")
+            print("Selected IDs:", selected_ids)
+            if selected_ids:
+                for selected_id in selected_ids:
+                    # Susirandame pasirinktą rezultatą pagal ID
+                    selected_result = next((r for r in results if str(r["id"]) == selected_id), None)
+                    print("Selected Result:", selected_result)  # Patikrinkite, ar randamas rezultatas
+                    if selected_result:
+                        SavedResult.objects.create(
+                            store=selected_result["store"],
+                            name=selected_result["name"],
+                            price=selected_result["price"]
+                        )
+                messages.success(request, "Pasirinkti rezultatai buvo sėkmingai išsaugoti!")
+            else:
+                messages.warning(request, "Nepasirinkote jokių rezultatų!")
+
     return render(request, "search_pricee.html", {
         "step": 1,
         "categories": categories,
         "products": products,
-        "results": results,  # Jei nėra rezultato, atrodys tuščiai
+        "results": results,
         "searched_product": searched_product,
     })
