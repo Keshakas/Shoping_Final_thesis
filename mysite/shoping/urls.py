@@ -2,6 +2,7 @@ from django.urls import path, include
 
 
 from . import views
+from .views import MyShoppingCartDetailView, search_price_view
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -18,6 +19,8 @@ urlpatterns = [
     path('myshoppingcart/<int:pk>/update', views.MyShoppingCartUpdateView.as_view(), name='cart_update'),
     path('myshoppingcart/<int:pk>/delete', views.MyShoppingCartDeleteView.as_view(), name='cart_delete'),
     path('myshoppingcart/<int:cart_id>/newproduct', views.MyProductCreatView.as_view(), name='product_new'),
+    path('cart/<int:pk>/', MyShoppingCartDetailView.as_view(), name='cart_detail'),
+    path('cart/<int:cart_id>/search_price/', search_price_view, name='search_price'),
 ]
 
 urlpatterns += [

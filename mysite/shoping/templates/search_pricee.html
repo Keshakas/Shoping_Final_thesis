@@ -64,19 +64,11 @@
                 {% endfor %}
             </tbody>
         </table>
+        <label>Pasirinkite produktą:</label>
+        <div>
+            <button type="submit" name="save_results" class="btn btn-success mt-3">Išsaugoti</button>
+        </div>
 
-        {% if user.is_authenticated %}
-            <label for="cart_id">Pasirinkite pirkinių krepšelį:</label>
-            <select name="cart_id" id="cart_id" class="form-control">
-                <option value="" disabled selected>-- Pasirinkite krepšelį --</option>
-                {% for cart in user_carts %}
-                    <option value="{{ cart.id }}">{{ cart.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" name="save_results" class="btn btn-success mt-3">Išsaugoti pasirinktus</button>
-        {% else %}
-            <p>Prisijunkite, kad galėtumėte išsaugoti rezultatus.</p>
-        {% endif %}
     </form>
 {% endif %}
 

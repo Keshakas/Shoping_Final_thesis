@@ -9,6 +9,10 @@
         <li><strong>Data: </strong>{{ cart.date | date:"Y-m-d, H:i" }}</li>
         <li><strong>Pavadinimas: </strong>{{ cart.name }}</li>
     </ul>
+    <div>
+    <a class="btn btn-secondary text-white btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
+    </div>
     <hr>
     <table class="table table-striped">
     <thead>
@@ -30,12 +34,10 @@
     </tbody>
     </table>
     <div>
-    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
-    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
+    <a class="btn btn-secondary btn-sm mt-1 text-white mb-1" href="{% url 'search_price' cart.pk %}">Pridėti produktą</a>
     </div>
+
 </div>
-<div>
-    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'product_new' cart.pk %}">Pridėti produktą</a>
-</div>
+
 
 {% endblock %}

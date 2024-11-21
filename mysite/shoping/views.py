@@ -182,103 +182,93 @@ def search_price(request):
     })
 
 
-def search_price_view(request):
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+from django.shortcuts import get_object_or_404, redirect
+
+from django.shortcuts import get_object_or_404, redirect
+
+def search_price_view(request, cart_id):
+    # Naudojame cart_id iš URL
+    cart = get_object_or_404(ShoppingCart, pk=cart_id, user=request.user)
     categories = Category.objects.all()
     selected_category = None
     products = []
     results = []
     searched_product = None
-    user_carts = ShoppingCart.objects.filter(user=request.user) if request.user.is_authenticated else None
 
     if request.method == "POST":
         if "select_category" in request.POST:
+            # Pasirenkame kategoriją ir filtruojame produktus
             category_id = request.POST.get("category")
             if category_id:
                 selected_category = Category.objects.get(id=category_id)
                 products = Product.objects.filter(category=selected_category)
-                request.session["selected_category_id"] = category_id
                 return render(request, "search_pricee.html", {
+                    "cart": cart,
                     "step": 2,
                     "categories": categories,
                     "products": products,
                     "selected_category": selected_category,
-                    "results": results,
-                    "searched_product": searched_product,
                 })
 
         elif "search_product" in request.POST:
+            # Paieškos produktas pagal ID
             product_id = request.POST.get("product")
             if product_id:
                 product = Product.objects.get(id=product_id)
                 searched_product = product.name
                 csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
 
+                # Paieška CSV failuose ir išsaugome rezultatus
+                results = []  # Išvalome rezultatus kiekvieną kartą
                 for file_path in csv_files:
                     store_name = file_path.split("_")[0].capitalize()
                     result = get_lowest_price_from_csv(file_path, product.name)
 
                     if result:
                         results.append({
-                            "id": len(results) + 1,  # Pridedame rezultatų ID
+                            "id": len(results) + 1,
                             "store": store_name,
                             "name": result["name"],
                             "price": result["price"]
                         })
 
-                # Įrašome rezultatus į sesiją
+                # Išsaugome rezultatus į sesiją, kad galėtume pasiekti juos iš kitų puslapių
                 request.session["results"] = results
 
-                selected_category_id = request.session.get("selected_category_id")
-                if selected_category_id:
-                    selected_category = Category.objects.get(id=selected_category_id)
-                    products = Product.objects.filter(category=selected_category)
-
                 return render(request, "search_pricee.html", {
+                    "cart": cart,
                     "step": 2,
                     "categories": categories,
                     "products": products,
-                    "selected_category": selected_category,
                     "results": results,
                     "searched_product": searched_product,
-                    "user_carts": user_carts,  # Pridedame vartotojo krepšelius
                 })
 
         elif "save_results" in request.POST:
-            if not request.user.is_authenticated:
-                messages.error(request, "Turite prisijungti, kad galėtumėte išsaugoti rezultatus.")
-                return redirect("login")
-
-            results = request.session.get("results", [])  # Atkuriame sesijoje saugotus rezultatus
+            # Užrašome pasirinkimus į krepšelį
             selected_ids = request.POST.getlist("selected_results")
-            cart_id = request.POST.get("cart_id")
-
-            if not cart_id:
-                messages.error(request, "Pasirinkite pirkinių krepšelį, į kurį norite išsaugoti rezultatus.")
-                return redirect("search_price_view")
-
-            shopping_cart = get_object_or_404(ShoppingCart, pk=cart_id, user=request.user)
-
+            results = request.session.get("results", [])
             if selected_ids:
                 for selected_id in selected_ids:
-                    # Susirandame pasirinktą rezultatą pagal ID
                     selected_result = next((r for r in results if str(r["id"]) == selected_id), None)
                     if selected_result:
+                        # Sukuriame SavedResult objektą su pasirinktų prekių duomenimis
                         SavedResult.objects.create(
-                            user=request.user,  # Priskiriame prisijungusį vartotoją
+                            user=request.user,
+                            cart=cart,  # Susiejame su aktyviu krepšeliu
                             store=selected_result["store"],
                             name=selected_result["name"],
-                            price=selected_result["price"],
-                            cart=shopping_cart,
+                            price=selected_result["price"]
                         )
-                messages.success(request, f"Pasirinkti rezultatai buvo išsaugoti krepšelyje: {shopping_cart.name}!")
-            else:
-                messages.warning(request, "Nepasirinkote jokių rezultatų!")
+                # Pabaigus išsaugoti, grįžtame į krepšelio detalės puslapį
+                return redirect("cart_detail", pk=cart.pk)
 
+    # Pradinis renderinimas su kategorijomis ir prekių sąrašais
     return render(request, "search_pricee.html", {
+        "cart": cart,
         "step": 1,
         "categories": categories,
-        "products": products,
-        "results": results,
-        "searched_product": searched_product,
-        "user_carts": user_carts,  # Vartotojo krepšelių sąrašas
     })
