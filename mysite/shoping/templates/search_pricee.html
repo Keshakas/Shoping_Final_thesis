@@ -66,7 +66,13 @@
                 {% endfor %}
             </tbody>
         </table>
-        <button type="submit" name="save_results" class="btn btn-success mt-3">Išsaugoti pasirinktus</button>
+        {% if user.is_authenticated %}
+            <!-- Mygtukas rodomas tik prisijungusiems vartotojams -->
+            <button type="submit" name="save_results" class="btn btn-success mt-3">Išsaugoti pasirinktus</button>
+        {% else %}
+            <!-- Pranešimas, jei vartotojas neprisijungęs -->
+            <p class="text-danger mt-3">Norėdami išsaugoti rezultatus, turite <a href="{% url 'login' %}">prisijungti</a>.</p>
+        {% endif %}
     </form>
 {% elif searched_product %}
     <h3>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h3>

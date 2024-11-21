@@ -92,10 +92,11 @@ class MyProductPrice(models.Model):
 
 
 class SavedResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Susiejame su vartotoju
     store = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    saved_at = models.DateTimeField(auto_now_add=True)
+    saved_at = models.DateTimeField(auto_now_add=True) # Pridedame išsaugojimo laiką
 
     def __str__(self):
-        return f"{self.name} ({self.store}) - {self.price} €"
+        return f"{self.name} ({self.store}) - {self.price} €  ({self.user})"

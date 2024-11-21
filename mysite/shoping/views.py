@@ -235,6 +235,7 @@ def search_price_view(request):
                     print("Selected Result:", selected_result)  # Patikrinkite, ar randamas rezultatas
                     if selected_result:
                         SavedResult.objects.create(
+                            user=request.user,  # Priskiriame prisijungusį vartotoją
                             store=selected_result["store"],
                             name=selected_result["name"],
                             price=selected_result["price"]
