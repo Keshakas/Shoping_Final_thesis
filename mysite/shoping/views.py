@@ -1,10 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.shortcuts import redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.template.context_processors import request
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
@@ -61,19 +63,25 @@ class MyShoppingCartCreateView(LoginRequiredMixin, generic.CreateView):
     model = ShoppingCart
     template_name = "my_shopping_cart_form.html"
     fields = ["name"]
-    success_url = "/myshoppingcart/"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.save()
         return super().form_valid(form)
 
+    def get_success_url(self):
+        # Nukreipiame į šio krepšelio detalių puslapį
+        return reverse_lazy('cart_detail', kwargs={'pk': self.object.pk})
+
 
 class MyShoppingCartUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = ShoppingCart
     template_name = "my_shopping_cart_form.html"
     fields = ['name']
-    success_url = "/myshoppingcart/"
+
+    def get_success_url(self):
+        # Nukreipiame į šio krepšelio detalių puslapį
+        return reverse_lazy('cart_detail', kwargs={'pk': self.object.pk})
 
 
 class MyShoppingCartDeleteView(LoginRequiredMixin, generic.DeleteView):
@@ -181,13 +189,6 @@ def search_price(request):
         'search_performed': search_performed,
     })
 
-
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-
-from django.shortcuts import get_object_or_404, redirect
-
-from django.shortcuts import get_object_or_404, redirect
 
 def search_price_view(request, cart_id):
     # Naudojame cart_id iš URL
