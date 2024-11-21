@@ -17,6 +17,7 @@ urlpatterns = [
     path('myshoppingcart/new', views.MyShoppingCartCreateView.as_view(), name='cart_new'),
     path('myshoppingcart/<int:pk>/update', views.MyShoppingCartUpdateView.as_view(), name='cart_update'),
     path('myshoppingcart/<int:pk>/delete', views.MyShoppingCartDeleteView.as_view(), name='cart_delete'),
+    path('myshoppingcart/<int:cart_id>/newproduct', views.MyProductCreatView.as_view(), name='product_new'),
 ]
 
 urlpatterns += [

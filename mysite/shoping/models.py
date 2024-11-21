@@ -77,26 +77,17 @@ class ProductPrice(models.Model):
         verbose_name_plural = "Produktų kainos"
 
 
-class MyProductPrice(models.Model):
-    product = models.CharField(verbose_name="Produktas", max_length=100)
-    store = models.CharField(verbose_name="Parduotuvė", max_length=100, null=True, blank=True)
-    price = models.DecimalField(verbose_name="Kaina", max_digits=10, decimal_places=2)
-    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE, related_name="my_products")
-
-    def __str__(self):
-        return f"{self.product.name} - {self.price} {self.cart}"
-
-    class Meta:
-        verbose_name = "Mano produkto kaina"
-        verbose_name_plural = "Mano produktų kainos"
-
-
 class SavedResult(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)  # Susiejame su vartotoju
     store = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     saved_at = models.DateTimeField(auto_now_add=True) # Pridedame išsaugojimo laiką
+    cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE, null=True, blank=True, related_name="my_products")
 
     def __str__(self):
         return f"{self.name} ({self.store}) - {self.price} €  ({self.user})"
+
+    class Meta:
+        verbose_name = "Mano produkto kaina"
+        verbose_name_plural = "Mano produktų kainos"

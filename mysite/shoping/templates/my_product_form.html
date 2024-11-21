@@ -8,7 +8,7 @@
 {% load crispy_forms_tags %}
 
 <div class="container-sm mt-4" style="max-width: 600px;">
-    <h1 class="text-center">Paieška</h1>
+    <h1 class="text-center">Produkto paieška</h1>
     <form method="POST">
     {% csrf_token %}
     {% if step == 1 %}
@@ -56,7 +56,9 @@
             <tbody>
                 {% for result in results %}
                     <tr>
-                        <td><input type="checkbox" name="selected_results" value="{{ result.id }}"></td>
+                        <td>
+                            <input type="checkbox" name="selected_results" value="{{ result.id }}">
+                        </td>
                         <td>{{ result.store }}</td>
                         <td>{{ result.name }}</td>
                         <td>{{ result.price }}</td>
@@ -64,20 +66,17 @@
                 {% endfor %}
             </tbody>
         </table>
-
         {% if user.is_authenticated %}
-            <label for="cart_id">Pasirinkite pirkinių krepšelį:</label>
-            <select name="cart_id" id="cart_id" class="form-control">
-                <option value="" disabled selected>-- Pasirinkite krepšelį --</option>
-                {% for cart in user_carts %}
-                    <option value="{{ cart.id }}">{{ cart.name }}</option>
-                {% endfor %}
-            </select>
+            <!-- Mygtukas rodomas tik prisijungusiems vartotojams -->
             <button type="submit" name="save_results" class="btn btn-success mt-3">Išsaugoti pasirinktus</button>
         {% else %}
-            <p>Prisijunkite, kad galėtumėte išsaugoti rezultatus.</p>
+            <!-- Pranešimas, jei vartotojas neprisijungęs -->
+            <p class="text-danger mt-3">Norėdami išsaugoti rezultatus, turite <a href="{% url 'login' %}">prisijungti</a>.</p>
         {% endif %}
     </form>
+{% elif searched_product %}
+    <h3>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h3>
+    <p class="text-danger">Nėra rastų produktų.</p>
 {% endif %}
 
 </div>

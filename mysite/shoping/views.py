@@ -1,9 +1,10 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.template.context_processors import request
+from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
@@ -80,6 +81,22 @@ class MyShoppingCartDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = "my_shopping_cart_delete.html"
     context_object_name = 'cart'
     success_url = "/myshoppingcart/"
+
+
+class MyProductCreatView(LoginRequiredMixin, UserPassesTestMixin, generic.CreateView):
+    model = SavedResult
+    template_name = "my_product_form.html"
+    fields = ['name', 'store', 'price']
+
+    def get_success_url(self):
+        return reverse("cart", kwargs={"pk": self.kwargs['cart_id']})
+
+    def test_func(self):
+        return ShoppingCart.objects.get(pk=self.kwargs['cart_id']).user == self.request.user
+
+    def form_valid(self, form):
+        form.instance.cart = ShoppingCart.objects.get(pk=self.kwargs['cart_id'])
+        return super().form_valid(form)
 
 
 @csrf_protect
@@ -171,6 +188,7 @@ def search_price_view(request):
     products = []
     results = []
     searched_product = None
+    user_carts = ShoppingCart.objects.filter(user=request.user) if request.user.is_authenticated else None
 
     if request.method == "POST":
         if "select_category" in request.POST:
@@ -222,25 +240,37 @@ def search_price_view(request):
                     "selected_category": selected_category,
                     "results": results,
                     "searched_product": searched_product,
+                    "user_carts": user_carts,  # Pridedame vartotojo krepšelius
                 })
 
         elif "save_results" in request.POST:
+            if not request.user.is_authenticated:
+                messages.error(request, "Turite prisijungti, kad galėtumėte išsaugoti rezultatus.")
+                return redirect("login")
+
             results = request.session.get("results", [])  # Atkuriame sesijoje saugotus rezultatus
             selected_ids = request.POST.getlist("selected_results")
-            print("Selected IDs:", selected_ids)
+            cart_id = request.POST.get("cart_id")
+
+            if not cart_id:
+                messages.error(request, "Pasirinkite pirkinių krepšelį, į kurį norite išsaugoti rezultatus.")
+                return redirect("search_price_view")
+
+            shopping_cart = get_object_or_404(ShoppingCart, pk=cart_id, user=request.user)
+
             if selected_ids:
                 for selected_id in selected_ids:
                     # Susirandame pasirinktą rezultatą pagal ID
                     selected_result = next((r for r in results if str(r["id"]) == selected_id), None)
-                    print("Selected Result:", selected_result)  # Patikrinkite, ar randamas rezultatas
                     if selected_result:
                         SavedResult.objects.create(
                             user=request.user,  # Priskiriame prisijungusį vartotoją
                             store=selected_result["store"],
                             name=selected_result["name"],
-                            price=selected_result["price"]
+                            price=selected_result["price"],
+                            cart=shopping_cart,
                         )
-                messages.success(request, "Pasirinkti rezultatai buvo sėkmingai išsaugoti!")
+                messages.success(request, f"Pasirinkti rezultatai buvo išsaugoti krepšelyje: {shopping_cart.name}!")
             else:
                 messages.warning(request, "Nepasirinkote jokių rezultatų!")
 
@@ -250,4 +280,5 @@ def search_price_view(request):
         "products": products,
         "results": results,
         "searched_product": searched_product,
+        "user_carts": user_carts,  # Vartotojo krepšelių sąrašas
     })

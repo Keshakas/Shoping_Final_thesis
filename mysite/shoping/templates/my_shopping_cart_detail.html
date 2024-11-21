@@ -20,9 +20,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for product in cart.products.all %}
+        {% for product in cart.my_products.all %}
         <tr>
-            <td>{{ product.product }}</td>
+            <td>{{ product.name }}</td>
             <td>{{ product.store }}</td>
             <td>{{ product.price }}</td>
         </tr>
@@ -33,6 +33,9 @@
     <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
     <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
     </div>
+</div>
+<div>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'product_new' cart.pk %}">Pridėti produktą</a>
 </div>
 
 {% endblock %}

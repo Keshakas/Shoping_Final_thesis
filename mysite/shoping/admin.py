@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Store, Category, Product, ProductPrice, Profile, ShoppingCart, MyProductPrice, SavedResult
+from .models import Store, Category, Product, ProductPrice, Profile, ShoppingCart, SavedResult
 
 
 class ProductPriceInline(admin.TabularInline):
@@ -18,6 +18,11 @@ class ProductPriceAdmin(admin.ModelAdmin):
     list_filter = ['product', 'store', 'price']
 
 
+class SavedResultAdmin(admin.ModelAdmin):
+    list_display = ['name', 'store', 'price', 'cart', 'user']
+    # list_filter = ['name', 'store', 'cart']
+
+
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ['date', 'user']
     inlines = [ProductPriceInline]
@@ -29,5 +34,4 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductPrice, ProductPriceAdmin)
 admin.site.register(Profile)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
-admin.site.register(MyProductPrice)
-admin.site.register(SavedResult)
+admin.site.register(SavedResult, SavedResultAdmin)
