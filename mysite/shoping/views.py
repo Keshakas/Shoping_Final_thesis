@@ -107,6 +107,18 @@ class MyProductCreatView(LoginRequiredMixin, UserPassesTestMixin, generic.Create
         return super().form_valid(form)
 
 
+class MyProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
+    model = SavedResult
+    template_name = "my_product_delete.html"
+    context_object_name = "product"
+
+    def get_success_url(self):
+        return reverse("cart_detail", kwargs={"pk": self.get_object().cart.pk})
+
+    def test_func(self):
+        return self.get_object().cart.user == self.request.user
+
+
 @csrf_protect
 def register(request):
     if request.method == "POST":
