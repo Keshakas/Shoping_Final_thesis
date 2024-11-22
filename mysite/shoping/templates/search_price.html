@@ -1,81 +1,93 @@
 {% extends 'base.html' %}
 
-{% block "title" %} Search price1 {% endblock %}
+{% block "title" %} Produkto kaina {% endblock %}
 
 {% block "content" %}
 {% load static %}
 
 {% load crispy_forms_tags %}
+<section class="py-5">
 
-<div class="container-sm mt-4" style="max-width: 600px;">
-    <h1 class="text-center">Paieška</h1>
-    <form method="POST">
-    {% csrf_token %}
-    {% if step == 1 %}
-    <!-- Kategorijos pasirinkimas -->
-    <div class="form-group">
-        <label for="category">Pasirinkite kategoriją:</label>
-        <select name="category" id="category" class="form-control">
-            <option value="" disabled selected>-- Pasirinkite --</option>
-            {% for category in categories %}
-            <option value="{{ category.id }}">{{ category.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <button type="submit" name="select_category" class="btn btn-primary mt-3">Patvirtinti</button>
-
-    {% elif step == 2 %}
-    <!-- Produktų pasirinkimas -->
-    <div class="form-group">
-        <label for="product">Pasirinkite produktą:</label>
-        <select name="product" id="product" class="form-control">
-            <option value="" disabled selected>-- Pasirinkite --</option>
-            {% for product in products %}
-            <option value="{{ product.id }}">{{ product.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <button type="submit" name="search_product" class="btn btn-primary mt-3 mb-3">Ieškoti</button>
-    {% endif %}
-</form>
-
-<!-- Rezultato rodymas -->
-{% if results %}
-    <h3>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h3>
-    <form method="POST">
+    <div class="container px-5">
+        <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+            <div class="text-center mb-5">
+                <div class="feature bg-primary bg-gradient-primary-to-secondary text-white rounded-3 mb-3"><i class="bi bi-basket"></i></div>
+                <h1 class="fw-bolder">Produkto kainos paieška</h1>
+            </div>
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+        <form method="POST">
         {% csrf_token %}
-        <table class="table table-striped table-hover mt-3">
-            <thead class="table-dark">
-                <tr>
-                    <th>Parduotuvė</th>
-                    <th>Pavadinimas</th>
-                    <th>Kaina (€)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for result in results %}
-                    <tr>
-                        <td>{{ result.store }}</td>
-                        <td>{{ result.name }}</td>
-                        <td>{{ result.price }}</td>
-                    </tr>
+        {% if step == 1 %}
+        <!-- Kategorijos pasirinkimas -->
+        <div class="form-group">
+            <label for="category">Pasirinkite kategoriją:</label>
+            <select name="category" id="category" class="form-control">
+                <option value="" disabled selected>-- Pasirinkite --</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
-            </tbody>
-        </table>
-        {% if user.is_authenticated %}
-            <!-- Rodomas tik prisijungusiems vartotojams -->
-            <p>Daugiau pasirinkimų rasite: <a href="{% url 'my_shopping_cart' %}">Mano krepšelis</a></p>
+            </select>
+        </div>
+        <button type="submit" name="select_category" class="btn btn-primary mt-3">Patvirtinti</button>
 
-        {% else %}
-            <!-- Pranešimas, jei vartotojas neprisijungęs -->
-            <p class="text-danger mt-3">Norėdami išsaugoti rezultatus, turite <a href="{% url 'login' %}?next={% url 'my_shopping_cart' %}">prisijungti</a></p>
+        {% elif step == 2 %}
+        <!-- Produktų pasirinkimas -->
+        <div class="form-group">
+            <label for="product">Pasirinkite produktą:</label>
+            <select name="product" id="product" class="form-control">
+                <option value="" disabled selected>-- Pasirinkite --</option>
+                {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" name="search_product" class="btn btn-primary mt-3 mb-3">Ieškoti</button>
         {% endif %}
     </form>
-{% elif searched_product %}
-    <h4>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h4>
-    <p class="text-danger">Nėra rastų produktų.</p>
-{% endif %}
 
-</div>
+    <!-- Rezultato rodymas -->
+    {% if results %}
+        <h4>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h4>
+        <form method="POST">
+            {% csrf_token %}
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Parduotuvė</th>
+                        <th>Pavadinimas</th>
+                        <th>Kaina (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ result.store }}</td>
+                            <td>{{ result.name }}</td>
+                            <td>{{ result.price }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if user.is_authenticated %}
+                <!-- Rodomas tik prisijungusiems vartotojams -->
+                <p>Daugiau pasirinkimų rasite: <a href="{% url 'my_shopping_cart' %}">Mano krepšelis</a></p>
+
+            {% else %}
+                <!-- Pranešimas, jei vartotojas neprisijungęs -->
+                <p class="text-danger mt-3">Norėdami išsaugoti rezultatus, turite <a href="{% url 'login' %}?next={% url 'my_shopping_cart' %}">prisijungti</a></p>
+            {% endif %}
+        </form>
+    {% elif searched_product %}
+        <h4>Paieškos rezultatai: <span class="text-secondary">{{ searched_product }}</span></h4>
+        <p class="text-danger">Nėra rastų produktų.</p>
+    {% endif %}
+
+    </div>
+    </div>
+    </div>
+    </div>
+</section>
+
 
 {% endblock %}
