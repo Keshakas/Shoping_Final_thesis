@@ -2,13 +2,31 @@
 {% block "title" %}Mano krepšelis{% endblock %}
 
 {% block "content" %}
-    <div class="container-sm mt-4" style="max-width: 600px;">
-        <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'cart_new' %}">Naujas krepšelis</a>
-        <h2 class="text-center mb-3"> Mano krepšelis:</h2>
-        {% for cart in carts %}
-        <a href="{{ cart.pk }}"><p>{{ cart.date | date:"Y-m-d, H:i" }} -- {{ cart.name }}</p></a>
-        <hr>
-        {% endfor %}
+<div class="container px-5">
+    <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <a class="btn btn-primary btn-sm mt-1 mb-1" href="{% url 'cart_new' %}">Naujas krepšelis</a>
+                <h2 class="text-center mb-3"> Mano krepšelis:</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data, laikas</th>
+                            <th>Pavadinimas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cart in carts %}
+                        <tr>
+                            <td>{{ cart.date | date:"Y-m-d, H:i" }}</td>
+                            <td><a href="{{ cart.pk }}">{{ cart.name }}</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+            </div>
+        </div>
     </div>
-
+</div>
 {% endblock %}

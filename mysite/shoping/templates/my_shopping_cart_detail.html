@@ -2,41 +2,49 @@
 {% block "title" %}Mano produktai{% endblock %}
 
 {% block "content" %}
+<!--<section class="py-5">-->
+    <div class="container px-5">
+        <div class="bg-light rounded-4 py-5 px-4 px-md-5">
 
-<div class="container-sm mt-4" style="max-width: 600px;">
-    <h5>Krepšelis - {{ cart.name }}</h5>
-    <ul>
-        <li><strong>Data: </strong>{{ cart.date | date:"Y-m-d, H:i" }}</li>
-    </ul>
-    <div>
-    <a class="btn btn-secondary text-white btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
-    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
-    </div>
-    <hr>
-    <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Produktas</th>
-            <th>Parduotuvė</th>
-            <th>Kaina</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for product in cart.my_products.all %}
-        <tr>
-            <td>{{ product.name }}</td>
-            <td>{{ product.store }}</td>
-            <td>{{ product.price }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    </table>
-    <div>
-    <a class="btn btn-secondary btn-sm mt-1 text-white mb-1" href="{% url 'search_price' cart.pk %}">Pridėti produktą</a>
-    </div>
+    <div class="row gx-5 justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <h5>Krepšelis - {{ cart.name }}</h5>
+            <ul>
+                <li><strong>Data: </strong>{{ cart.date | date:"Y-m-d, H:i" }}</li>
+            </ul>
+            <div>
+            <a class="btn btn-secondary text-white btn-sm mt-1 mb-1" href="{% url 'cart_update' cart.pk %}">Redaguoti</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'cart_delete' cart.pk %}">Ištrinti</a>
+            </div>
+            <hr>
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Produktas</th>
+                    <th>Parduotuvė</th>
+                    <th>Kaina</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in cart.my_products.all %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.store }}</td>
+                    <td>{{ product.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            <div>
+            <a class="btn btn-secondary btn-sm mt-1 text-white mb-1" href="{% url 'search_price' cart.pk %}">Pridėti produktą</a>
+            </div>
 
-</div>
+        </div>
+        </div>
+    </div>
+    </div>
+</section>
 
 
 {% endblock %}
