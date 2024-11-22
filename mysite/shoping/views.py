@@ -168,28 +168,96 @@ def profile(request):
     }
     return render(request, template_name="profile.html", context=context)
 
+
+# kainos paieska neprisijungusiems vartotojams
 def search_price(request):
-    result = None  # Numatytasis rezultatas
-    search_performed = False  # Nurodo, ar paieška buvo atlikta
+    categories = Category.objects.all()
+    selected_category = None
+    products = []
+    results = []
+    searched_product = None
 
-    if request.method == 'GET':
-        # Gauname įvestis iš GET užklausos
-        product_name = request.GET.get('product_name', '').strip()
-        fat_content = request.GET.get('fat_content', '').strip()
-        quantity = request.GET.get('quantity', '').strip()
+    if request.method == "POST":
+        if "select_category" in request.POST:
+            category_id = request.POST.get("category")
+            if category_id:
+                selected_category = Category.objects.get(id=category_id)
+                products = Product.objects.filter(category=selected_category)
+                request.session["selected_category_id"] = category_id
+                return render(request, "search_price.html", {
+                    "step": 2,
+                    "categories": categories,
+                    "products": products,
+                    "selected_category": selected_category,
+                    "results": results,
+                    "searched_product": searched_product,
+                })
 
-        # Patikriname, ar visi kriterijai užpildyti
-        if product_name and fat_content and quantity:
-            search_performed = True  # Paieška atliekama
-            file_path = "barbora_pienas.csv"  # CSV failo kelias
-            result = get_filtered_lowest_price(file_path, product_name, fat_content, quantity)
+        elif "search_product" in request.POST:
+            product_id = request.POST.get("product")
+            if product_id:
+                product = Product.objects.get(id=product_id)
+                searched_product = product.name
+                csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
 
-    return render(request, 'search_price.html', {
-        'result': result,
-        'search_performed': search_performed,
+                for file_path in csv_files:
+                    store_name = file_path.split("_")[0].capitalize()
+                    result = get_lowest_price_from_csv(file_path, product.name)
+
+                    if result:
+                        results.append({
+                            "id": len(results) + 1,  # Pridedame rezultatų ID
+                            "store": store_name,
+                            "name": result["name"],
+                            "price": result["price"]
+                        })
+
+                # Įrašome rezultatus į sesiją
+                request.session["results"] = results
+
+                selected_category_id = request.session.get("selected_category_id")
+                if selected_category_id:
+                    selected_category = Category.objects.get(id=selected_category_id)
+                    products = Product.objects.filter(category=selected_category)
+
+                return render(request, "search_price.html", {
+                    "step": 2,
+                    "categories": categories,
+                    "products": products,
+                    "selected_category": selected_category,
+                    "results": results,
+                    "searched_product": searched_product,
+                })
+
+        elif "save_results" in request.POST:
+            results = request.session.get("results", [])  # Atkuriame sesijoje saugotus rezultatus
+            selected_ids = request.POST.getlist("selected_results")
+            print("Selected IDs:", selected_ids)
+            if selected_ids:
+                for selected_id in selected_ids:
+                    # Susirandame pasirinktą rezultatą pagal ID
+                    selected_result = next((r for r in results if str(r["id"]) == selected_id), None)
+                    print("Selected Result:", selected_result)  # Patikrinkite, ar randamas rezultatas
+                    if selected_result:
+                        SavedResult.objects.create(
+                            user=request.user,  # Priskiriame prisijungusį vartotoją
+                            store=selected_result["store"],
+                            name=selected_result["name"],
+                            price=selected_result["price"]
+                        )
+                messages.success(request, "Pasirinkti rezultatai buvo sėkmingai išsaugoti!")
+            else:
+                messages.warning(request, "Nepasirinkote jokių rezultatų!")
+
+    return render(request, "search_price.html", {
+        "step": 1,
+        "categories": categories,
+        "products": products,
+        "results": results,
+        "searched_product": searched_product,
     })
 
-
+# kainos paieska prisijungusiam vartotojui
 def search_price_view(request, cart_id):
     # Naudojame cart_id iš URL
     cart = get_object_or_404(ShoppingCart, pk=cart_id, user=request.user)

@@ -2,7 +2,7 @@ from django.urls import path, include
 
 
 from . import views
-from .views import MyShoppingCartDetailView, search_price_view
+from .views import MyShoppingCartDetailView, search_price_view, search_price
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -12,7 +12,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path("profile/", views.profile, name="profile"),
     path('search_price/', views.search_price, name='search_price'),
-    path('search_pricee/', views.search_price_view, name='search_pricee'),
     path("myshoppingcart/", views.MyShoppingCartListView.as_view(), name="my_shopping_cart"),
     path("myshoppingcart/<int:pk>", views.MyShoppingCartDetailView.as_view(), name="my_shopping_cart_detail"),
     path('myshoppingcart/new', views.MyShoppingCartCreateView.as_view(), name='cart_new'),
