@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,9 +13,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.contrib.auth import password_validation
 from .models import Store, Category, Product, ProductPrice, ShoppingCart, SavedResult
-from .utils import get_filtered_lowest_price, get_lowest_price_from_csv
+from .utils import get_lowest_price_from_csv
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.http import HttpResponse
+from django.core.mail import EmailMessage
 from django.utils import timezone
 
 
@@ -40,9 +41,6 @@ def resume(request):
 
 def projects(request):
     return render(request, template_name="projects.html")
-
-def contact(request):
-    return render(request, template_name="contact.html")
 
 
 class MyShoppingCartListView(LoginRequiredMixin, generic.ListView):
@@ -353,3 +351,48 @@ def search_price_view(request, cart_id):
         "step": 1,
         "categories": categories,
     })
+
+
+def contact_view(request):
+    # Kintamasis pranešimams
+    message_status = None
+
+    if request.method == "POST":
+        # Paimkite duomenis iš formos
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+
+        print(f"Name: {name}, Email: {email}, Phone: {phone}, Message: {message}")  # Debug informacija
+
+        # Sukurkite el. pašto turinį
+        email_subject = f"New Contact Form Submission from {name}"
+        email_body = f"""
+        Name: {name}
+        Email: {email}
+        Phone: {phone}
+        Message:
+        {message}
+        """
+        print(f"Email Subject: {email_subject}")  # Patikrinkite, ar el. laiškas generuojamas
+
+        # Siųskite el. laišką
+        email = EmailMessage(
+            subject=email_subject,
+            body=email_body,
+            from_email="noreply@yourdomain.com",  # Jūsų serverio el. paštas
+            to=["pvz@shoping.lt"],  # Gavėjo el. pašto adresas
+        )
+        try:
+            email.send()
+            print("Email sent successfully!")  # Debug informacija
+            message_status = 'success'  # Sėkmingas siuntimas
+        except Exception as e:
+            print(f"Failed to send email: {e}")  # Debug klaidos
+            message_status = 'error'  # Klaidos atvejis
+
+        # Nukreipiame į tą patį puslapį, kad būtų rodomas pranešimas
+        return render(request, "contact.html", {'message_status': message_status})
+
+    return render(request, "contact.html")
