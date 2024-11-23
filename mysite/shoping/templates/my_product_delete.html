@@ -2,13 +2,13 @@
 {% block "title" %}Produkto trynimas{% endblock %}
 
 {% block "content" %}
-<div class=container-sm mt-4" style="max-width: 600px;">
+<div class=container-sm mt-4" style="max-width: 800px;">
     <form method="POST">
         {% load crispy_forms_tags %}
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Ištrinti produktą</legend>
-            <h4>Ar tikrai nurite ištrinti {{ product }} iš krepšelio?</h4>
+            <h4>Ar tikrai norite ištrinti <strong>{{ product.name }}</strong> iš krepšelio?</h4>
         </fieldset>
         <div class="form-group">
             <button class="btn btn-outline-danger" type="submit">Taip, ištrinti</button>
