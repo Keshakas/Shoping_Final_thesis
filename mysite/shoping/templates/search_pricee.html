@@ -48,7 +48,7 @@
 
         <!-- Rezultato rodymas -->
         {% if results %}
-            <h3>Paieškos rezultatai: <span class="text-primary">{{ searched_product }}</span></h3>
+            <h3>Mažiausia kaina: <span class="text-primary">{{ searched_product }}</span></h3>
             <form method="POST">
                 {% csrf_token %}
                 <table class="table table-striped table-hover mt-3">

@@ -13,6 +13,7 @@
                         <tr>
                             <th>Data, laikas</th>
                             <th>Pavadinimas</th>
+                            <th>Suma €</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -21,6 +22,7 @@
                         <tr>
                             <td>{{ cart.date | date:"Y-m-d, H:i" }}</td>
                             <td><a href="{{ cart.pk }}">{{ cart.name }}</a></td>
+                            <td>{{ cart.total }}</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>

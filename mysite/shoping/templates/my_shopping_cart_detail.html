@@ -7,7 +7,7 @@
         <div class="bg-light rounded-4 py-5 px-4 px-md-5">
 
     <div class="row gx-5 justify-content-center">
-        <div class="col-lg-8 col-xl-6">
+        <div class="col-lg-10 col-xl-8">
             <h5>Krepšelis - {{ cart.name }}</h5>
             <ul>
                 <li><strong>Data: </strong>{{ cart.date | date:"Y-m-d, H:i" }}</li>
@@ -22,7 +22,7 @@
                 <tr>
                     <th>Produktas</th>
                     <th>Parduotuvė</th>
-                    <th>Kaina</th>
+                    <th>Kaina €</th>
                     <th></th>
                 </tr>
             </thead>
@@ -35,6 +35,10 @@
                     <td><a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'product_delete' product.pk %}">Ištrinti</a></td>
                 </tr>
                 {% endfor %}
+                <tr>
+                    <td colspan="3"><b>Suma:</b></td>
+                    <td><b>{{ cart.total }} €</b></td>
+                </tr>
             </tbody>
             </table>
             <div>

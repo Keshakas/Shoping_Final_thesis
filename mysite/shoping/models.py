@@ -54,6 +54,12 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(User, verbose_name="Vartotojas", on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(verbose_name="Pavadinimas", max_length=100, null=True, blank=True)
 
+    def total(self):
+        total_sum = 0
+        for my_product in self.my_products.all():
+            total_sum += my_product.price
+        return total_sum
+
     def __str__(self):
         return f"{self.date} -- {self.name}"
 

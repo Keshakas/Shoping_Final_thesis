@@ -24,9 +24,9 @@ class SavedResultAdmin(admin.ModelAdmin):
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ['date', 'user']
+    list_display = ['date', 'user', 'total']
     inlines = [ProductPriceInline]
-    readonly_fields = ['date']
+    readonly_fields = ['date', 'total']
 
 admin.site.register(Store)
 admin.site.register(Category)
