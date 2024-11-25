@@ -208,7 +208,7 @@ def search_price(request):
             if product_id:
                 product = Product.objects.get(id=product_id)
                 searched_product = product.name
-                csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
+                csv_files = ["barbora_produktai.csv", "rimi_produktai.csv", "iki_produktai.csv"]
 
                 for file_path in csv_files:
                     store_name = file_path.split("_")[0].capitalize()
@@ -298,7 +298,7 @@ def search_price_view(request, cart_id):
             if product_id:
                 product = Product.objects.get(id=product_id)
                 searched_product = product.name
-                csv_files = ["barbora_pienas.csv", "rimi_pienas.csv"]
+                csv_files = ["barbora_produktai.csv", "rimi_produktai.csv", "iki_produktai.csv"]
 
                 # Paieška CSV failuose ir išsaugome rezultatus
                 results = []  # Išvalome rezultatus kiekvieną kartą
