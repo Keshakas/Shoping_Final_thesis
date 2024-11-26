@@ -1,35 +1,45 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% block "title" %}{% trans "Registration" %}{% endblock %}
+{% block "title" %}Registracija{% endblock %}
 
 {% block "content" %}
 
     <div class="container register">
-        <h3>{% trans "Registration" %}</h3><br/>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">{% trans "Username" %}</label>
-                <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp">
-                <small id="usernameHelp" class="form-text text-muted">{% trans "Up to 150 characters." %}</small>
+        <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+            <div class="text-center mb-5">
+                <div class="feature bg-primary bg-gradient-primary-to-secondary text-white rounded-3 mb-3"><i class="bi bi-person-workspace"></i></div>
+                <h2 class="fw-bolder">Registracija</h2>
             </div>
-            <div class="form-group">
-                <label for="exampleInputEmail1">{% trans "Email" %}</label>
-                <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <small id="emailHelp" class="form-text text-muted">{% trans "We won't share it with anyone, we won't send any spam. Required to send a new password." %} </small>
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-10 col-xl-8">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="username">Vartotojo vardas</label>
+                            <input name="username" type="text" class="form-control" id="username" aria-describedby="usernameHelp">
+                            <small id="usernameHelp" class="form-text text-muted">Iki 150 simbolių.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">El. paštas</label>
+                            <input name="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                            <small id="emailHelp" class="form-text text-muted">Nesidalinsime su niekuo, nesiųsime jokio spamo.
+                            Reikalingas naujam slaptažodžiui išsiųsti.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Slaptažodis</label>
+                            <input name="password" type="password" class="form-control" id="password" aria-describedby="pwdHelp">
+                            <small id="pwdHelp" class="form-text text-muted">Ne mažiau, kaip 8 simboliai. Negali būti vien tik skaičiai</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="password2">Pakartoti slaptažodį</label>
+                            <input name="password2" type="password" class="form-control" id="password2" aria-describedby="pwd2Help">
+                        </div>
+                        <button type="submit" class="btn btn-primary register-button mt-3 mb-3">Registruotis</button>
+                    </form>
+                    <p>Jeigu užsiregistravote anksčiau, <a href="{% url 'login' %}"><strong>prisijunkite.</strong></a></p>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="password">{% trans "Password" %}</label>
-                <input name="password" type="password" class="form-control" id="password" aria-describedby="pwdHelp">
-                <small id="pwdHelp" class="form-text text-muted">{% trans "At least 8 characters. May not be numbers only." %}</small>
-            </div>
-            <div class="form-group">
-                <label for="password2">{% trans "Repeat Password" %}</label>
-                <input name="password2" type="password" class="form-control" id="password2" aria-describedby="pwd2Help">
-            </div>
-            <button type="submit" class="btn btn-primary register-button mt-2">{% trans "Register" %}</button>
-        </form>
-        <p>{% trans "If you registered earlier," %} <a href="{% url 'login' %}"><strong>{% trans "login." %}</strong></a></p>
+        </div>
     </div>
 
 {% endblock %}

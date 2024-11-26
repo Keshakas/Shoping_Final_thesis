@@ -3,27 +3,45 @@
 
 {% block "content" %}
 <div class="container my-5">
-    <img class="rounded-circle account-img" src="{{ user.profile.photo.url }}" style="max-width: 15%">
-    <h3>Mano profilis:</h3>
-    <ul>
-       <li><strong>Vartotojas: </strong>{{ user.get_username }}</li>
-       <li><strong>Vardas: </strong>{{ user.first_name }}</li>
-       <li><strong>Pavardė: </strong>{{ user.last_name }}</li>
-       <li><strong>El. paštas: </strong>{{ user.email }}</li>
-       <li><strong>Prisijungęs nuo: </strong>{{ user.date_joined | date:"Y-m-d, H:i" }}</li>
-    </ul>
-    <form method="post" enctype="multipart/form-data">
-        {% load crispy_forms_tags %}
-        {% csrf_token %}
-        <fieldset>
-            <legend class="border-bottom mb-4">Profilio info</legend>
-            {{ user_update_form | crispy }}
-            {{ profile_update_form | crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
+    <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <!-- Profilio informacija -->
+                <div class="row align-items-center mb-4">
+                    <!-- Nuotrauka kairėje -->
+                    <div class="col-md-3 text-center">
+                        <img class="rounded-circle account-img"
+                             src="{{ user.profile.photo.url }}"
+                             alt="Profilio nuotrauka"
+                             style="max-width: 100%; max-height: 150px; object-fit: cover;">
+                    </div>
+                    <!-- Informacija dešinėje -->
+                    <div class="col-md-9">
+<!--                        <h3>Mano profilis:</h3>-->
+                        <ul>
+                            <li><strong>Vartotojas: </strong>{{ user.get_username }}</li>
+                            <li><strong>Vardas: </strong>{{ user.first_name }}</li>
+                            <li><strong>Pavardė: </strong>{{ user.last_name }}</li>
+                            <li><strong>El. paštas: </strong>{{ user.email }}</li>
+                            <li><strong>Prisijungęs nuo: </strong>{{ user.date_joined | date:"Y-m-d, H:i" }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Profilio redagavimo forma -->
+                <form method="post" enctype="multipart/form-data">
+                    {% load crispy_forms_tags %}
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend class="border-bottom mb-4">Profilio informacijos regavimas:</legend>
+                        {{ user_update_form | crispy }}
+                        {{ profile_update_form | crispy }}
+                    </fieldset>
+                    <div class="form-group">
+                        <button class="btn btn-outline-info" type="submit">Atnaujinti</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+    </div>
 </div>
-
 {% endblock %}
