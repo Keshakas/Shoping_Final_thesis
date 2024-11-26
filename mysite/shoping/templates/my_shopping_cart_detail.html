@@ -32,7 +32,11 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.store }}</td>
                     <td>{{ product.price }}</td>
-                    <td><a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'product_delete' product.pk %}">Ištrinti</a></td>
+                    <td>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ product.url }}" target="_blank" rel="noopener noreferrer">Pirkti</a>
+                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'product_delete' product.pk %}">Ištrinti</a>
+                    </td>
+
                 </tr>
                 {% endfor %}
                 <tr>

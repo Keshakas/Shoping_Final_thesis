@@ -88,6 +88,7 @@ class SavedResult(models.Model):
     store = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    url = models.URLField(max_length=2000, null=True, blank=True)
     saved_at = models.DateTimeField(auto_now_add=True) # Pridedame išsaugojimo laiką
     cart = models.ForeignKey(ShoppingCart, verbose_name="Pirkinių krepšelis", on_delete=models.CASCADE, null=True, blank=True, related_name="my_products")
 

@@ -311,7 +311,8 @@ def search_price_view(request, cart_id):
                             "id": len(results) + 1,
                             "store": store_name,
                             "name": result["name"],
-                            "price": result["price"]
+                            "price": result["price"],
+                            "url": result["url"]  # Pridedame URL
                         })
 
                 # Išsaugome rezultatus į sesiją, kad galėtume pasiekti juos iš kitų puslapių
@@ -340,7 +341,8 @@ def search_price_view(request, cart_id):
                             cart=cart,  # Susiejame su aktyviu krepšeliu
                             store=selected_result["store"],
                             name=selected_result["name"],
-                            price=selected_result["price"]
+                            price=selected_result["price"],
+                            url=selected_result["url"]  # Pridedame URL
                         )
                 # Pabaigus išsaugoti, grįžtame į krepšelio detalės puslapį
                 return redirect("cart_detail", pk=cart.pk)
@@ -351,6 +353,7 @@ def search_price_view(request, cart_id):
         "step": 1,
         "categories": categories,
     })
+
 
 
 def contact_view(request):
