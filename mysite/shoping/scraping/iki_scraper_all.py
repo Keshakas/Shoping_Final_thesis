@@ -57,7 +57,7 @@ urls = [
 # Atidarome CSV failą rašymui
 with open("iki_produktai.csv", 'w', encoding="UTF-8", newline="") as file:
     csv_writer = csv.writer(file)
-    csv_writer.writerow(['Name', "Price"])
+    csv_writer.writerow(['Name', "Price", "Url"])
 
     # Nustatome Chrome headless režimą
     chrome_options = Options()
@@ -88,11 +88,14 @@ with open("iki_produktai.csv", 'w', encoding="UTF-8", newline="") as file:
                 price = block.find(
                     class_="_dsp-flex _fd-row _fb-auto _bxs-border-box _pos-relative _mih-0px _miw-0px _fs-0 _ai-center").get_text().strip()
                 price = price.split("€ ")[1]  # Paimame tik kainą po '€'
+                href = block.find(class_="_o-0enter-0 _btc-0hover-43816417 _brc-0hover-43816417 _bbc-0hover-43816417 _blc-0hover-43816417 _dsp-flex _ai-stretch _fd-column _fb-auto _bxs-border-box _pos-relative _mih-0px _miw-0px _fs-0 _w-10037 _o-1 _btc-43816448 _brc-43816448 _bbc-43816448 _blc-43816448 _btw-1316332129 _brw-1316332129 _bbw-1316332129 _blw-1316332129 _btlr-1307610122 _btrr-1307610122 _bbrr-1307610122 _bblr-1307610122 _pt-1316332160 _pr-1316332160 _pb-1316332160 _pl-1316332160 _bbs-solid _bts-solid _bls-solid _brs-solid").find('a')['href']
+                full_href = f"https://lastmile.lt{href}"  # Pridedame pilną URL
 
                 # Įrašome pavadinimą ir kainą į CSV
-                csv_writer.writerow([name, price])
+                csv_writer.writerow([name, price, full_href])
                 print(name)
                 print(price)
+                print(full_href)
                 print("----------------------------------")
             except AttributeError:
                 # Jei koks elementas nerandamas, praleidžiame jį

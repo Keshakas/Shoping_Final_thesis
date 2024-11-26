@@ -1,8 +1,7 @@
-from selenium import webdriver
+import requests
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.options import Options
 import csv
-import time
+import concurrent.futures
 
 # URL sąrašas
 urls = [
@@ -13,61 +12,56 @@ urls = [
     "https://www.rimi.lt/e-parduotuve/lt/produktai/bakaleja/c/SH-2"
 ]
 
+# Funkcija, kuri ištraukia duomenis iš puslapio
+def scrape_page(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    blocks = soup.find_all(class_="product-grid__item")
+    data = []
+
+    for block in blocks:
+        name = block.find(class_="card__name").get_text().strip()
+        href_element = block.find(class_="card__url js-gtm-eec-product-click")
+        if href_element:
+            href = href_element['href']
+            full_href = f"https://www.rimi.lt{href}"  # Pridedame pilną URL
+        price_raw = block.find(class_="price-tag card__price")
+        if price_raw:
+            price_raw = price_raw.get_text().strip()
+            price_cleaned = ''.join(filter(str.isdigit, price_raw))
+            if len(price_cleaned) > 2:
+                price = f"{price_cleaned[:-2]}.{price_cleaned[-2:]}"
+            else:
+                price = price_cleaned
+            data.append([name, price, full_href])
+        else:
+            data.append([name, "N/A", full_href])
+
+    return data
+
+# Funkcija, kuri apdoroja visus puslapius
+def scrape_all_pages(base_url):
+    page_num = 1
+    all_data = []
+    while True:
+        url = f"{base_url}?currentPage={page_num}&pageSize=20&query=%3Arelevance%3AallCategories%3A{base_url.split('/')[-1]}%3AassortmentStatus%3AinAssortment"
+        data = scrape_page(url)
+        if not data:
+            break
+        all_data.extend(data)
+        page_num += 1
+    return all_data
+
 # Atidarome CSV failą rašymui
 with open("rimi_produktai.csv", 'w', encoding="UTF-8", newline="") as file:
     csv_writer = csv.writer(file)
-    csv_writer.writerow(['Name', "Price"])
+    csv_writer.writerow(['Name', "Price", "Url"])
 
-    # Nustatome Chrome headless režimą
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Veikia be grafinio lango
-    chrome_options.add_argument("--no-sandbox")  # Linux sistemos suderinamumas
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Pagerina veikimą
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(scrape_all_pages, base_url) for base_url in urls]
+        for future in concurrent.futures.as_completed(futures):
+            data = future.result()
+            for row in data:
+                csv_writer.writerow(row)
 
-    # Paleidžiame Chrome su nurodytais nustatymais
-    driver = webdriver.Chrome(options=chrome_options)
-
-    for base_url in urls:
-        page_num = 1
-        while True:
-            # Generuojame URL su puslapio numeriu
-            url = f"{base_url}?currentPage={page_num}&pageSize=20&query=%3Arelevance%3AallCategories%3A{base_url.split('/')[-1]}%3AassortmentStatus%3AinAssortment"
-            driver.get(url)
-
-            # Naudojame BeautifulSoup duomenų nuskaitymui
-            soup = BeautifulSoup(driver.page_source, 'html.parser')
-
-            # Randame produktų blokus
-            blocks = soup.find_all(class_="product-grid__item")
-
-            # Jeigu nėra daugiau blokų, nutraukiame ciklą
-            if not blocks:
-                print(f"No more pages for {base_url}")
-                break
-
-            # Surandame ir įrašome pavadinimą bei kainą
-            for block in blocks:
-                name = block.find(class_="card__name").get_text().strip()
-                price_raw = block.find(class_="price-tag card__price")
-                if price_raw:
-                    price_raw = price_raw.get_text().strip()
-                    price_cleaned = ''.join(filter(str.isdigit, price_raw))
-                    if len(price_cleaned) > 2:
-                        price = f"{price_cleaned[:-2]}.{price_cleaned[-2:]}"
-                    else:
-                        price = price_cleaned
-                    csv_writer.writerow([name, price])
-                    print(name)
-                    print(price)
-                    print("----------------------------------")
-                else:
-                    # Jei nėra kainos, galima įrašyti tuščią kainą arba praleisti įrašą
-                    csv_writer.writerow([name, "N/A"])
-                    print(name)
-                    print("N/A")
-                    print("----------------------------------")
-
-            page_num += 1
-            time.sleep(0.01)  # Pridėkime nedidelį laukimo laiką, kad būtų išvengta serverio užblokavimo
-
-    driver.quit()
+print("Scrapinimas baigtas")

@@ -15,7 +15,7 @@ urls = [
 # Atidarome CSV failą rašymui
 with open("barbora_produktai.csv", 'w', encoding="UTF-8", newline="") as file:
     csv_writer = csv.writer(file)
-    csv_writer.writerow(['Category', 'Name', "Price"])  # Pridedame antraštę
+    csv_writer.writerow(['Category', 'Name', "Price", "Url"])  # Pridedame antraštę
 
     # Nustatome Chrome headless režimą
     chrome_options = Options()
@@ -50,8 +50,10 @@ with open("barbora_produktai.csv", 'w', encoding="UTF-8", newline="") as file:
                 name = block.find(class_="tw-block").get_text().strip()
                 price = block.find(class_="tw-pb-1").get_text().strip()
                 price = price.split("€")[0]  # Paimame tik pirmąją dalį prieš '€'
-                csv_writer.writerow([category, name, price])  # Rašome į CSV failą
-                print(f"Kategorija: {category}, Pavadinimas: {name}, Kaina: {price}")
+                href = block.find(class_="tw-relative tw-flex tw-justify-center").find('a')['href']
+                full_href = f"https://www.barbora.lt{href}"  # Pridedame pilną URL
+                csv_writer.writerow([category, name, price, full_href])  # Rašome į CSV failą
+                print(f"Kategorija: {category}, Pavadinimas: {name}, Kaina: {price}, url: {full_href}")
 
             page_num += 1
 
