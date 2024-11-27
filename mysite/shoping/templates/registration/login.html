@@ -7,12 +7,12 @@
 {% load widget_tweaks %}
 
   {% if form.errors %}
-    <div class="fs-3 fw-light text-muted text-center">{% trans "Login error, please try again!" %}</div>
+    <div class="fs-3 fw-light text-muted text-center">Klaida. Bandykite dar kartą.</div>
   {% endif %}
 
   {% if next %}
     {% if user.is_authenticated %}
-      <div class="fs-3 fw-light text-muted text-center">{% trans "You do not have access to this information. You must log in." %}</div>
+      <div class="fs-3 fw-light text-muted text-center">Neturite prieigos prie šios informacijos. Turite prisijungti.</div>
     {% endif %}
   {% endif %}
 
