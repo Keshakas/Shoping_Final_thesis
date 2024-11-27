@@ -74,7 +74,7 @@
 
             {% else %}
                 <!-- Pranešimas, jei vartotojas neprisijungęs -->
-                <p class="text-danger mt-3">Norėdami išsaugoti rezultatus, turite <a href="{% url 'login' %}?next={% url 'my_shopping_cart' %}">prisijungti</a></p>
+                <p class="text-danger mt-3">Norėdami gauti daugiau pasirinkimų, turite <a href="{% url 'login' %}?next={% url 'my_shopping_cart' %}">prisijungti</a></p>
             {% endif %}
         </form>
     {% elif searched_product %}
