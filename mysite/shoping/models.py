@@ -47,6 +47,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Produktas"
         verbose_name_plural = "Produktai"
+        ordering = ['name']
 
 
 class ShoppingCart(models.Model):
